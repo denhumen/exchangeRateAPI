@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package exchangeRateAPI;
+
+option go_package = "/exchange_rate";
+
+service ExchangeRateService {
+    rpc GetCurrentRate (GetRateRequest) returns (GetRateResponse);
+    rpc SubscribeEmail (SubscribeRequest) returns (SubscribeResponse);
+    rpc UnsubscribeEmail (UnsubscribeRequest) returns (UnsubscribeResponse);
+}
+
+message GetRateRequest {}
+
+message GetRateResponse {
+    double rate = 1;
+}
+
+message SubscribeRequest {
+    string email = 1;
+}
+
+message SubscribeResponse {
+    string message = 1;
+}
+
+message UnsubscribeRequest {
+    string email = 1;
+}
+
+message UnsubscribeResponse {
+    string message = 1;
+}

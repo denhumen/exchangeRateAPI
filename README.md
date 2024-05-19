@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project implements a gRPC service that allows users to:
+This project implements a gRPC service and client that allows users to:
 1. Get the current USD to UAH exchange rate.
 2. Subscribe an email to receive daily updates about the exchange rate.
 3. Unsubscribe an email from receiving updates.
@@ -116,6 +116,16 @@ go run src/exchangeRateAPI/client/2/client.go
 
 #### Cron Job
 - A cron job is set up using the cron package to send daily emails with the current exchange rate.
+
+#### Running with Docker
+
+1. Run in root directory following command:
+
+```
+docker-compose up --build
+```
+
+2. After this you can run clients localy without using Docker for them
 
 ### Conclusion
 This project demonstrates how to create a gRPC service in Go that provides exchange rate information and email notifications. The service uses SQLite for data storage and includes features such as database migration, email sending, and daily notifications via a cron job. The provided Docker configuration allows easy containerization of the application.

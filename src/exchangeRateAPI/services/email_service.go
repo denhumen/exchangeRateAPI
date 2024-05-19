@@ -10,7 +10,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-// SendCurrentRateToSubscribers sends the current exchange rate to all subscribed emails.
+// SendCurrentRateToSubscribers gets subscribers from database and sends them current rate
 func SendCurrentRateToSubscribers(rate float64) {
 	var subscribers []db.Subscriber
 	db.DB.Find(&subscribers)
@@ -28,8 +28,6 @@ func SendCurrentRateToSubscribers(rate float64) {
 		mailer.SetHeader("To", subscriber.Email)
 		mailer.SetBody("text/plain", "Current USD to UAH exchange rate: "+fmt.Sprintf("%.2f", rate))
 
-		log.Printf("subscriber: %s", subscriber.Email)
-
 		dialer := gomail.NewDialer(
 			os.Getenv("SMTP_HOST"),
 			smtpPort,
@@ -40,5 +38,7 @@ func SendCurrentRateToSubscribers(rate float64) {
 		if err := dialer.DialAndSend(mailer); err != nil {
 			log.Printf("Could not send email to %s: %v", subscriber.Email, err)
 		}
+
+		log.Printf("Message sent to: %s", subscriber.Email)
 	}
 }

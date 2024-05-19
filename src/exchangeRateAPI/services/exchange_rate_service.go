@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -12,16 +13,19 @@ import (
 	pb "exchangeRateAPI/src/exchangeRateAPI/proto/exchange_rate"
 )
 
+// Struct that implements the gRPC service interface
 type ExchangeRateService struct {
 	pb.UnimplementedExchangeRateServiceServer
 }
 
+// Struct to parse the response from the external exchange rate API
 type ExchangeRateAPIResponse struct {
 	Rates struct {
 		UAH float64 `json:"UAH"`
 	} `json:"rates"`
 }
 
+// GetCurrentRate fetches the current exchange rate from USD to UAH from an external openexchangerates API
 func (s *ExchangeRateService) GetCurrentRate(ctx context.Context, req *pb.GetRateRequest) (*pb.GetRateResponse, error) {
 	apiKey := os.Getenv("OPENEXCHANGERATES_API_KEY")
 	if apiKey == "" {
@@ -44,10 +48,13 @@ func (s *ExchangeRateService) GetCurrentRate(ctx context.Context, req *pb.GetRat
 		return nil, fmt.Errorf("failed to decode API response: %v", err)
 	}
 
+	log.Printf("Successfully returned rate")
+
 	rate := apiResponse.Rates.UAH
 	return &pb.GetRateResponse{Rate: rate}, nil
 }
 
+// SubscribeEmail subscribes an email to receive daily exchange rate updates.
 func (s *ExchangeRateService) SubscribeEmail(ctx context.Context, req *pb.SubscribeRequest) (*pb.SubscribeResponse, error) {
 	email := req.GetEmail()
 	if email == "" {
@@ -59,9 +66,12 @@ func (s *ExchangeRateService) SubscribeEmail(ctx context.Context, req *pb.Subscr
 		return nil, err
 	}
 
+	log.Printf("Subscription sucessfull for %s", email)
+
 	return &pb.SubscribeResponse{Message: "Subscription successful for " + email}, nil
 }
 
+// UnsubscribeEmail unsubscribes an email not to receive daily exchange rate updates.
 func (s *ExchangeRateService) UnsubscribeEmail(ctx context.Context, req *pb.UnsubscribeRequest) (*pb.UnsubscribeResponse, error) {
 	email := req.GetEmail()
 	if email == "" {
@@ -71,6 +81,8 @@ func (s *ExchangeRateService) UnsubscribeEmail(ctx context.Context, req *pb.Unsu
 	if err := db.DB.Where("email = ?", email).Delete(&db.Subscriber{}).Error; err != nil {
 		return nil, err
 	}
+
+	log.Printf("Unsubscription sucessfull for %s", email)
 
 	return &pb.UnsubscribeResponse{Message: "Unsubscription successful for " + email}, nil
 }

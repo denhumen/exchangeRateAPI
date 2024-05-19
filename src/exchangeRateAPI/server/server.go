@@ -54,6 +54,7 @@ func main() {
 	}
 }
 
+// Addictional function to process daily email sending
 func sendDailyExchangeRateEmail() {
 	exchangeRateService := &services.ExchangeRateService{}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)

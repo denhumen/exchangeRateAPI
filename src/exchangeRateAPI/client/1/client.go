@@ -35,11 +35,4 @@ func main() {
 		log.Fatalf("Could not subscribe email: %v", err)
 	}
 	log.Printf("Subscribe Response: %s", subscribeResp.GetMessage())
-
-	// UnsubscribeEmail
-	unsubscribeResp, err := client.UnsubscribeEmail(ctx, &pb.UnsubscribeRequest{Email: "mail007aris@gmail.com"})
-	if err != nil {
-		log.Fatalf("Could not unsubscribe email: %v", err)
-	}
-	log.Printf("Unsubscribe Response: %s", unsubscribeResp.GetMessage())
 }
